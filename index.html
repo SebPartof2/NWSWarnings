@@ -8,13 +8,16 @@
         body { font-family: Arial, sans-serif; margin: 20px; }
         .warning { border: 1px solid red; padding: 10px; margin: 10px 0; }
         .menu { background: #333; padding: 10px; }
-        .menu a { color: white; margin-right: 10px; text-decoration: none; }
+        .menu a { color: white; margin-right: 10px; text-decoration: none; cursor: pointer; }
+        .dropdown { display: none; position: absolute; background: white; border: 1px solid #ccc; padding: 10px; }
+        .dropdown a { display: block; margin: 5px 0; color: black; }
     </style>
 </head>
 <body>
     <div class="menu">
         <a href="index.html">Home</a>
-        <a href="#" id="officeMenu">NWS Offices</a>
+        <a id="officeMenu">NWS Offices ▼</a>
+        <div id="officeDropdown" class="dropdown"></div>
     </div>
     <h1>Active NWS Warnings</h1>
     <div id="warnings">Loading...</div>
@@ -50,19 +53,24 @@
                     warningsDiv.appendChild(div);
                 });
                 
-                const officeMenu = document.getElementById('officeMenu');
+                const officeDropdown = document.getElementById('officeDropdown');
+                officeDropdown.innerHTML = '';
                 offices.forEach(office => {
                     const link = document.createElement('a');
                     link.href = `office_${office.replace(/\s+/g, '_')}.html`;
                     link.textContent = office;
-                    link.style.marginLeft = '10px';
-                    officeMenu.insertAdjacentElement('afterend', link);
+                    officeDropdown.appendChild(link);
                 });
                 
             } catch (error) {
                 document.getElementById('warnings').innerHTML = '<p>Error loading warnings.</p>';
             }
         }
+        
+        document.getElementById('officeMenu').addEventListener('click', () => {
+            const dropdown = document.getElementById('officeDropdown');
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
         
         fetchWarnings();
         setInterval(fetchWarnings, 60000); // Refresh every minute
