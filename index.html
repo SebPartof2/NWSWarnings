@@ -26,6 +26,9 @@
                     return;
                 }
                 
+                const severityOrder = { "Extreme": 1, "Severe": 2, "Moderate": 3, "Minor": 4, "Unknown": 5 };
+                data.features.sort((a, b) => severityOrder[a.properties.severity] - severityOrder[b.properties.severity]);
+                
                 data.features.forEach(alert => {
                     const div = document.createElement('div');
                     div.className = 'warning';
