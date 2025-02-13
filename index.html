@@ -7,9 +7,15 @@
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .warning { border: 1px solid red; padding: 10px; margin: 10px 0; }
+        .menu { background: #333; padding: 10px; }
+        .menu a { color: white; margin-right: 10px; text-decoration: none; }
     </style>
 </head>
 <body>
+    <div class="menu">
+        <a href="index.html">Home</a>
+        <a href="#" id="officeMenu">NWS Offices</a>
+    </div>
     <h1>Active NWS Warnings</h1>
     <div id="warnings">Loading...</div>
     
@@ -29,7 +35,9 @@
                 const severityOrder = { "Extreme": 1, "Severe": 2, "Moderate": 3, "Minor": 4, "Unknown": 5 };
                 data.features.sort((a, b) => severityOrder[a.properties.severity] - severityOrder[b.properties.severity]);
                 
+                const offices = new Set();
                 data.features.forEach(alert => {
+                    offices.add(alert.properties.sender);
                     const div = document.createElement('div');
                     div.className = 'warning';
                     div.innerHTML = `<h2>${alert.properties.event}</h2>
@@ -41,6 +49,16 @@
                                      <a href="${alert.properties.uri}" target="_blank">More Info</a>`;
                     warningsDiv.appendChild(div);
                 });
+                
+                const officeMenu = document.getElementById('officeMenu');
+                offices.forEach(office => {
+                    const link = document.createElement('a');
+                    link.href = `office_${office.replace(/\s+/g, '_')}.html`;
+                    link.textContent = office;
+                    link.style.marginLeft = '10px';
+                    officeMenu.insertAdjacentElement('afterend', link);
+                });
+                
             } catch (error) {
                 document.getElementById('warnings').innerHTML = '<p>Error loading warnings.</p>';
             }
